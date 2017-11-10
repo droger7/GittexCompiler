@@ -1,15 +1,15 @@
-class MyLexicalAnalyzer {
+class MyLexicalAnalyzer extends LexicalAnalyzer{
 
   var index : Int = -1  //Keeps track of character in fileContents
   var nextChar : Char = ' '  //Holds value of next char in fileContents
   var tokens : String = ""  //Holds value of possible token. Will go into currentToken if valid
   var reachedEnd : Boolean = false
 
-  override def addChar(): Unit = { //Adds character to the potential token
+  override def addChar(): Unit = { //Adds next character to the token
     tokens = tokens + nextChar
   }
 
-  override def getChar(): Unit = { //Gets next character from file input
+  override def getChar(): Unit = { //Gets next character from file
     index +=1
     if (index < Compiler.fileContents.length) {
       nextChar = Compiler.fileContents.charAt(index)
@@ -23,13 +23,13 @@ class MyLexicalAnalyzer {
     tokens = ""
   }
 
-  override def getNextToken(): Unit = { //Forms next token
+  override def getNextToken(): Unit = {
     resetToken()
     getChar()
     nonSpace()
 
     if (reachedEnd == true) {}
-    else if (CONSTANTS.SYMBOLS.contains(nextChar)) { //Special character state
+    else if (CONSTANTS.SYMBOLS.contains(nextChar)) {
       tokens = valid()
       tokens = tokens.map(_.toUpper)
       if (tokens.endsWith("\n")) {
@@ -47,7 +47,6 @@ class MyLexicalAnalyzer {
       addChar()
       tokens += textState()
       if (nextChar.equals(CONSTANTS.brackE) || nextChar.equals(CONSTANTS.parE) || nextChar.equals(CONSTANTS.equals) || nextChar.equals('\\')) {
-        //Will decrement index so special characters aren't skipped
         index -= 1
       }
       Compiler.currentToken = tokens
@@ -61,16 +60,16 @@ class MyLexicalAnalyzer {
     }
   }
 
-  def lookup(token : String): Boolean = { //Returns true if the token is legal
+  def lookup(token : String): Boolean = {
     return CONSTANTS.ALLCONSTANTS.contains(token.toUpperCase)
   }
 
-  def valid() : String = { //Processes the annotation characters
+  def valid() : String = {
 
-    if (nextChar.equals(CONSTANTS.asterisk)) { // start '*'
+    if (nextChar.equals(CONSTANTS.asterisk)) {
       addChar()
       getChar()
-      if (nextChar.equals(CONSTANTS.colon)) { //Special case for fixing skipping ':'
+      if (nextChar.equals(CONSTANTS.colon)) {
         index -= 1
       }
     }
@@ -82,10 +81,10 @@ class MyLexicalAnalyzer {
     else if (nextChar.equals(CONSTANTS.slash)) {
       addChar()
       tokens += textState()
-      if (nextChar.equals(CONSTANTS.brackB)) { //Will add ending bracket if required
+      if (nextChar.equals(CONSTANTS.brackB)) {
         addChar()
       }
-      if (tokens.equalsIgnoreCase(CONSTANTS.DOCE)) { //Ignores '\t' and '\n' after '\END' so program can quit
+      if (tokens.equalsIgnoreCase(CONSTANTS.DOCE)) {
         nonSpace()
       }
     }
@@ -104,7 +103,7 @@ class MyLexicalAnalyzer {
         System.exit(1)
       }
     }
-    else if (nextChar.equals(CONSTANTS.brackE)) {   //The following functions add special characters
+    else if (nextChar.equals(CONSTANTS.brackE)) {
       addChar()
     }
     else if (nextChar.equals(CONSTANTS.brackB)) {
@@ -124,7 +123,7 @@ class MyLexicalAnalyzer {
   }
 
 
-  def textState() : String = { //Reads in text until end of word, line or token
+  def textState() : String = {
     var text : String = ""
     getChar()
 
@@ -145,7 +144,7 @@ class MyLexicalAnalyzer {
     return text
   }
 
-  def nonSpace() : Unit = {   //Calls get char until a non space character is found
+  def nonSpace() : Unit = {
     while ((CONSTANTS.EOFSpace contains nextChar) && !reachedEnd) {
       getChar()
     }
