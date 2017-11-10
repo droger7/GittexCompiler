@@ -61,7 +61,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer{
   }
 
   def lookup(token : String): Boolean = {
-    return CONSTANTS.ALLCONSTANTS.contains(token.toUpperCase)
+    CONSTANTS.ALLCONSTANTS.contains(token.toUpperCase)
   }
 
   def valid() : String = {
