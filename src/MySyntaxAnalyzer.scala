@@ -3,7 +3,7 @@
 class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   var parseTree = new scala.collection.mutable.Stack[String]
-  
+
   override def gittex() = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCB)) {
       parseTree.push(Compiler.currentToken)
