@@ -4,44 +4,39 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   var parseTree = new scala.collection.mutable.Stack[String]
 
+  //Language Start
   override def gittex() = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCB)) {
-      parseTree.push(Compiler.currentToken)
-      Compiler.Scanner.getNextToken()
-      title()
+      pushGet()
       variableDefine()
+      title()
       body()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCE)){
         parseTree.push(Compiler.currentToken)
       }
       else {
-        println("SYNTAX ERROR. Expected: '" + CONSTANTS.DOCE + "'. Received: '" + Compiler.currentToken + "'")
-        System.exit(1)
+        error(CONSTANTS.DOCE)
       }
     }
     else {
-      println("SYNTAX ERROR. Expected '" + CONSTANTS.DOCB + "'. Received '" + Compiler.currentToken + "'")
-      System.exit(1)
+      error(CONSTANTS.DOCB)
     }
+
   }
 
   override def title(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.TITLEB)) {
-      parseTree.push(Compiler.currentToken)
-      Compiler.Scanner.getNextToken()
+      pushGet()
       needText()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) {
-        parseTree.push(Compiler.currentToken)
-        Compiler.Scanner.getNextToken()
+        pushGet()
       }
       else {
-        println("SYNTAX ERROR. Expected '" + CONSTANTS.BRACKETE + "'. Received '" + Compiler.currentToken + "'")
-        System.exit(1)
+        error(CONSTANTS.BRACKETE)
       }
     }
     else {
-      println("SYNTAX ERROR. Expected: '" + CONSTANTS.TITLEB + "'. Received: '" + Compiler.currentToken + "'")
-      System.exit(1)
+      error(CONSTANTS.TITLEB)
     }
 
   }
@@ -55,7 +50,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
       newline()
       body()
     }
-    else if (Compiler.Scanner.reachedEnd == true) {}
+    else if (Compiler.Scanner.reachedEnd) {}
     else {
       innerText()
       body()
@@ -64,27 +59,22 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def paragraph(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.PARAB)) {
-      parseTree.push(Compiler.currentToken)
-      Compiler.Scanner.getNextToken()
+      pushGet()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DEFB)) {
         variableDefine()
       }
       innerText()
 
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.PARAE)) {
-        parseTree.push(Compiler.currentToken)
-        Compiler.Scanner.getNextToken()
+        pushGet()
       }
       else {
-        println("SYNTAX ERROR. Expected: '" + CONSTANTS.PARAE + "'. Received: '" + Compiler.currentToken + "'")
-        System.exit(1)
+        error(CONSTANTS.PARAE)
       }
     }
     else {
-      println("SYNTAX ERROR. Expected: '" + CONSTANTS.PARAB + "'. Received: '" + Compiler.currentToken + "'")
-      System.exit(1)
+      error(CONSTANTS.PARAB)
     }
-
   }
 
   override def innerText(): Unit = {
@@ -116,10 +106,9 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
       newline()
       innerText()
     }
-    else if (Compiler.Scanner.reachedEnd == true){}
+    else if (Compiler.Scanner.reachedEnd){}
     else if (isText()) {
-      parseTree.push(Compiler.currentToken)
-      Compiler.Scanner.getNextToken()
+      pushGet()
       innerText()
     }
   }
@@ -134,66 +123,54 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def variableDefine(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DEFB)) {
-      parseTree.push(Compiler.currentToken)
-      Compiler.Scanner.getNextToken()
+      pushGet()
       needText()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.EQUALS)) {
-        parseTree.push(Compiler.currentToken)
-        Compiler.Scanner.getNextToken()
+        pushGet()
         needText()
         if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) {
-          parseTree.push(Compiler.currentToken)
-          Compiler.Scanner.getNextToken()
+          pushGet()
           variableDefine()
         }
         else {
-          println("Syntax error. Expected: '" + CONSTANTS.BRACKETE + "'. Received: '" + Compiler.currentToken + "'")
-          System.exit(1)
+          error(CONSTANTS.BRACKETE)
         }
       }
       else {
-        println("SYNTAX ERROR. Illegal token. Expected: '" + CONSTANTS.EQUALS + "'. Received: '" + Compiler.currentToken + "'")
-        System.exit(1)
+        error(CONSTANTS.EQUALS)
       }
     }
   }
 
   override def variableUse(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.USEB)) {
-      parseTree.push(Compiler.currentToken)
-      Compiler.Scanner.getNextToken()
+      pushGet()
       needText()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) {
-        parseTree.push(Compiler.currentToken)
-        Compiler.Scanner.getNextToken()
+        pushGet()
       }
       else {
-        println("SYNTAX ERROR. Illegal token. Expected: '" + CONSTANTS.BRACKETE + "'. Received: '" + Compiler.currentToken + "'")
-        System.exit(1)
+        error(CONSTANTS.BRACKETE)
       }
     }
   }
 
   override def bold(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BOLD)) {
-      parseTree.push(Compiler.currentToken)
-      Compiler.Scanner.getNextToken()
+      pushGet()
       needText()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BOLD)) {
-        parseTree.push(Compiler.currentToken)
-        Compiler.Scanner.getNextToken()
+        pushGet()
       }
       else {
-        println("SYNTAX ERROR. Illegal token. Expected: '" + CONSTANTS.BOLD + "'. Received: '" + Compiler.currentToken + "'")
-        System.exit(1)
+        error(CONSTANTS.BOLD)
       }
     }
   }
 
   override def listItem(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.LISTITEM)) {
-      parseTree.push(Compiler.currentToken)
-      Compiler.Scanner.getNextToken()
+      pushGet()
     }
   }
 
@@ -210,94 +187,77 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
       link()
       innerItem()
     }
-    else if (Compiler.Scanner.reachedEnd == true) {}
+    else if (Compiler.Scanner.reachedEnd) {}
     else if (isText()) { //Text
-      parseTree.push(Compiler.currentToken)
-      Compiler.Scanner.getNextToken()
+      pushGet()
       innerItem()
     }
   }
 
   override def link(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.LINKB)) {
-      parseTree.push(Compiler.currentToken)
-      Compiler.Scanner.getNextToken()
+      pushGet()
       needText()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) {
-        parseTree.push(Compiler.currentToken)
-        Compiler.Scanner.getNextToken()
+        pushGet()
         if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSB)) {
-          parseTree.push(Compiler.currentToken)
-          Compiler.Scanner.getNextToken()
-          parseTree.push(Compiler.currentToken)
-          Compiler.Scanner.getNextToken()
+          pushGet()
+          pushGet()
           if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSE)) {
-            parseTree.push(Compiler.currentToken)
-            Compiler.Scanner.getNextToken()
+            pushGet()
           }
           else {
-            println("SYNTAX ERROR. Expected: '" + CONSTANTS.ADDRESSE + "'. Received: '" + Compiler.currentToken + "'")
-            System.exit(1)
+            error(CONSTANTS.ADDRESSE)
           }
         }
         else {
-          println("SYNTAX ERROR. Expected: '" + CONSTANTS.ADDRESSB + "'. Received: '" + Compiler.currentToken + "'")
-          System.exit(1)
+          error(CONSTANTS.ADDRESSB)
         }
       }
       else {
-        println("SYNTAX ERROR. Expected: '" + CONSTANTS.BRACKETE + "'. Received: '" + Compiler.currentToken + "'")
-        System.exit(1)
+        error(CONSTANTS.BRACKETE)
       }
     }
   }
 
   override def image(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.IMAGEB)) {
-      parseTree.push(Compiler.currentToken)
-      Compiler.Scanner.getNextToken()
+      pushGet()
       needText()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) {
-        parseTree.push(Compiler.currentToken)
-        Compiler.Scanner.getNextToken()
+        pushGet()
         if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSB)) {
-          parseTree.push(Compiler.currentToken)
-          Compiler.Scanner.getNextToken()
-          parseTree.push(Compiler.currentToken)
-          Compiler.Scanner.getNextToken()
+          pushGet()
+          pushGet()
           if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSE)) {
-            parseTree.push(Compiler.currentToken)
-            Compiler.Scanner.getNextToken()
+            pushGet()
           }
           else {
-            println("SYNTAX ERROR. Expected: '" + CONSTANTS.ADDRESSE + "'. Received: '" + Compiler.currentToken + "'")
-            System.exit(1)
+            error(CONSTANTS.ADDRESSE)
           }
         }
         else {
-          println("Syntax error. Expected: '" + CONSTANTS.ADDRESSB + "'. Received: '" + Compiler.currentToken + "'")
-          System.exit(1)
+          error(CONSTANTS.ADDRESSB)
         }
       }
       else {
-        println("Syntax error. Expected: '" + CONSTANTS.BRACKETE + "'. Received: '" + Compiler.currentToken + "'")
-        System.exit(1)
+        error(CONSTANTS.BRACKETE)
       }
     }
   }
 
   override def newline(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.NEWLINE)) {
-      parseTree.push(Compiler.currentToken)
-      Compiler.Scanner.getNextToken()
+      pushGet()
     }
   }
 
+  //determines if the currentToken is text
   def isText() : Boolean = {
-    if (Compiler.currentToken.contains(':') || Compiler.currentToken.contains('.') || Compiler.currentToken.contains(',')) {
+    if (Compiler.currentToken.contains(CONSTANTS.colon) || Compiler.currentToken.contains(CONSTANTS.period) || Compiler.currentToken.contains(CONSTANTS.comma)) {
       return true
     }
-    if (Compiler.currentToken.last == '\n' ) {
+    if (Compiler.currentToken.last == CONSTANTS.newLine ) {
       return Compiler.currentToken.length == (Compiler.currentToken.filter(_.isLetterOrDigit).length+1)
     }
     Compiler.currentToken.length == Compiler.currentToken.filter(_.isLetterOrDigit).length
@@ -305,10 +265,16 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   def needText(): Unit = {
     if (isText()) {
-      parseTree.push(Compiler.currentToken)
-      Compiler.Scanner.getNextToken()
+      pushGet()
       needText()
     }
-    else if (Compiler.Scanner.reachedEnd == true) {}
+  }
+  def error(expected: String) : Unit = {
+    println("SYNTAX ERROR. Expected: '" + expected + "'. Received: '" + Compiler.currentToken + "'")
+    System.exit(1)
+  }
+  def pushGet(): Unit = {
+    parseTree.push(Compiler.currentToken)
+    Compiler.Scanner.getNextToken()
   }
 }

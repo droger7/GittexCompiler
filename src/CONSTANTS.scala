@@ -19,6 +19,8 @@ object CONSTANTS {
   val HEADING : String = "#"
 
   val asterisk : Char = '*'
+  val newLine : Char = '\n'
+  val lineStart : Char = '\r'
   val plus : Char = '+'
   val equals : Char = '='
   val slash : Char = '\\'
@@ -29,6 +31,8 @@ object CONSTANTS {
   val parB : Char = '('
   val parE : Char = ')'
   val colon : Char = ':'
+  val period : Char = '.'
+  val comma : Char = ','
 
   val ALLCONSTANTS : Array[String] = Array(DOCB, DOCE, TITLEB, BRACKETE, PARAB, PARAE, NEWLINE, EMPTY, BOLD, LISTITEM, LINKB, ADDRESSB, ADDRESSE, IMAGEB, DEFB, EQUALS, USEB, HEADING)
   val SYMBOLS : Array[Char] = Array(asterisk, plus, equals, slash, exclamation, pound, brackB, brackE, parB, parE)

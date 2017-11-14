@@ -4,13 +4,15 @@ object Compiler {
 
   val Scanner = new MyLexicalAnalyzer
   val Parser = new MySyntaxAnalyzer
-  val SemanticAnalyzer = new MySyntaxAnalyzer
+  val Semantic = new MySemanticAnalyzer()
 
   def main(args: Array[String]): Unit = {
     checkFile(args)
     readFile(args(0))
 
     Scanner.getNextToken()
+    Parser.gittex()
+    Semantic.semAnalyzer()
 
   }
 
@@ -24,7 +26,7 @@ object Compiler {
       println("USAGE ERROR: wrong number of args fool!")
       System.exit(1)
     }
-    else if (! args(0).endsWith(".mkd")) {
+    else if (! args(0).endsWith(".gtx")) {
       println("USAGE ERROR: wrong extension fool!")
       System.exit(1)
     }

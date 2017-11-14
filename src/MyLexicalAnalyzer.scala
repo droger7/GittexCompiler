@@ -28,7 +28,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer{
     getChar()
     nonSpace()
 
-    if (reachedEnd == true) {}
+    if (reachedEnd) {}
     else if (CONSTANTS.SYMBOLS.contains(nextChar)) {
       tokens = valid()
       tokens = tokens.map(_.toUpper)
@@ -39,14 +39,13 @@ class MyLexicalAnalyzer extends LexicalAnalyzer{
         Compiler.currentToken = tokens
       }
       else {
-        println("LEXICAL ERROR: Illegal token: '" + tokens + "' received")
-        System.exit(1)
+        error(nextChar)
       }
     }
     else if (nextChar.isLetterOrDigit || nextChar.equals(':') || nextChar.equals('.') || nextChar.equals(',')) { //Text state
       addChar()
       tokens += textState()
-      if (nextChar.equals(CONSTANTS.brackE) || nextChar.equals(CONSTANTS.parE) || nextChar.equals(CONSTANTS.equals) || nextChar.equals('\\')) {
+      if (nextChar.equals(CONSTANTS.brackE) || nextChar.equals(CONSTANTS.parE) || nextChar.equals(CONSTANTS.equals) || nextChar.equals(CONSTANTS.slash)) {
         index -= 1
       }
       Compiler.currentToken = tokens
@@ -55,8 +54,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer{
       getNextToken() //Skip and get next token
     }
     else {
-      println("LEXICAL ERROR: Illegal character: '" + nextChar + "' received")
-      System.exit(1)
+      error(nextChar)
     }
   }
 
@@ -73,11 +71,12 @@ class MyLexicalAnalyzer extends LexicalAnalyzer{
         index -= 1
       }
     }
+
     else if (nextChar.equals(CONSTANTS.plus)) {
       addChar()
       tokens += textState()
-
     }
+
     else if (nextChar.equals(CONSTANTS.slash)) {
       addChar()
       tokens += textState()
@@ -86,12 +85,20 @@ class MyLexicalAnalyzer extends LexicalAnalyzer{
       }
       if (tokens.equalsIgnoreCase(CONSTANTS.DOCE)) {
         nonSpace()
+        if (index - Compiler.fileContents.length != 0) { //Stuff after '\END'
+          index -= 1
+          getNextToken()
+          println("Syntax error. Tokens were received after '" + CONSTANTS.DOCE + "'. Received: '" + Compiler.currentToken + "'")
+          System.exit(1)
+        }
       }
     }
+
     else if (nextChar.equals(CONSTANTS.pound)) {
       addChar()
       tokens += textState()
     }
+
     else if (nextChar.equals(CONSTANTS.exclamation)) {
       addChar()
       getChar()
@@ -99,26 +106,29 @@ class MyLexicalAnalyzer extends LexicalAnalyzer{
         addChar()
       }
       else {
-        println("Lexical error. Illegal character after '!'. Received: '" + nextChar + "'")
-        System.exit(1)
+        error(nextChar)
       }
     }
+
     else if (nextChar.equals(CONSTANTS.brackE)) {
       addChar()
     }
+
     else if (nextChar.equals(CONSTANTS.brackB)) {
       addChar()
     }
+
     else if (nextChar.equals(CONSTANTS.parE)) {
       addChar()
     }
+
     else if (nextChar.equals(CONSTANTS.parB)) {
       addChar()
     }
+
     else if (nextChar.equals(CONSTANTS.equals)) {
       addChar()
     }
-
     tokens
   }
 
@@ -131,12 +141,12 @@ class MyLexicalAnalyzer extends LexicalAnalyzer{
       text += nextChar
       getChar()
     }
-    if (nextChar.equals('\n')) {
+    if (nextChar.equals(CONSTANTS.newLine)) {
       text += nextChar
     }
-    if (nextChar.equals('\r')) {
+    if (nextChar.equals(CONSTANTS.lineStart)) {
       getChar()
-      if (nextChar.equals('\n')) {
+      if (nextChar.equals(CONSTANTS.newLine)) {
         text += nextChar
       }
     }
@@ -148,5 +158,10 @@ class MyLexicalAnalyzer extends LexicalAnalyzer{
     while ((CONSTANTS.EOFSpace contains nextChar) && !reachedEnd) {
       getChar()
     }
+  }
+
+  def error(expected: Char) : Unit = {
+    println("Lexical error. Illegal character after '!'. Received: '" + expected + "'")
+    System.exit(1)
   }
 }
