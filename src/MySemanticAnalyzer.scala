@@ -141,12 +141,11 @@ class MySemanticAnalyzer() {
           newStack.pop()
           link += newStack.pop()
           newStack.pop()
-
           file.append("<img src=\"" + link + "\" alt=" + linkText + "\">")
 
         case CONSTANTS.BOLD =>
-          var innerText: String = ""
 
+          var innerText: String = ""
           spot = newStack.pop()
           while (!spot.equalsIgnoreCase(CONSTANTS.BOLD)) {
             innerText += spot
@@ -155,16 +154,16 @@ class MySemanticAnalyzer() {
           file.append("<b> " + innerText + " </b>")
 
         case CONSTANTS.DEFB =>
+
           varName.enqueue(newStack.pop()) //Store name
           newStack.pop() //Ignore '='
           varValue.enqueue(newStack.pop()) //Store variable value
           newStack.pop() //Ignore ']'
 
         case CONSTANTS.USEB =>
+
           var useVar: String = newStack.pop()
-
           file.append(varValue(varName.indexOf(useVar, currentScope)) + " ") //Pulls var value
-
           newStack.pop() //Ignore ']'
 
         case _ => file.append(spot + " ")
