@@ -7,7 +7,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
   //Language Start
   override def gittex() = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCB)) {
-      pushGet()
+      pushNGet()
       variableDefine()
       title()
       body()
@@ -26,10 +26,10 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def title(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.TITLEB)) {
-      pushGet()
+      pushNGet()
       needText()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) {
-        pushGet()
+        pushNGet()
       }
       else {
         error(CONSTANTS.BRACKETE)
@@ -59,14 +59,14 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def paragraph(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.PARAB)) {
-      pushGet()
+      pushNGet()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DEFB)) {
         variableDefine()
       }
       innerText()
 
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.PARAE)) {
-        pushGet()
+        pushNGet()
       }
       else {
         error(CONSTANTS.PARAE)
@@ -108,7 +108,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
     }
     else if (Compiler.Scanner.reachedEnd){}
     else if (isText()) {
-      pushGet()
+      pushNGet()
       innerText()
     }
   }
@@ -123,13 +123,13 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def variableDefine(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DEFB)) {
-      pushGet()
+      pushNGet()
       needText()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.EQUALS)) {
-        pushGet()
+        pushNGet()
         needText()
         if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) {
-          pushGet()
+          pushNGet()
           variableDefine()
         }
         else {
@@ -144,10 +144,10 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def variableUse(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.USEB)) {
-      pushGet()
+      pushNGet()
       needText()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) {
-        pushGet()
+        pushNGet()
       }
       else {
         error(CONSTANTS.BRACKETE)
@@ -157,10 +157,10 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def bold(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BOLD)) {
-      pushGet()
+      pushNGet()
       needText()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BOLD)) {
-        pushGet()
+        pushNGet()
       }
       else {
         error(CONSTANTS.BOLD)
@@ -170,7 +170,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def listItem(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.LISTITEM)) {
-      pushGet()
+      pushNGet()
     }
   }
 
@@ -189,22 +189,22 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
     }
     else if (Compiler.Scanner.reachedEnd) {}
     else if (isText()) { //Text
-      pushGet()
+      pushNGet()
       innerItem()
     }
   }
 
   override def link(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.LINKB)) {
-      pushGet()
+      pushNGet()
       needText()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) {
-        pushGet()
+        pushNGet()
         if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSB)) {
-          pushGet()
-          pushGet()
+          pushNGet()
+          pushNGet()
           if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSE)) {
-            pushGet()
+            pushNGet()
           }
           else {
             error(CONSTANTS.ADDRESSE)
@@ -222,15 +222,15 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def image(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.IMAGEB)) {
-      pushGet()
+      pushNGet()
       needText()
       if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) {
-        pushGet()
+        pushNGet()
         if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSB)) {
-          pushGet()
-          pushGet()
+          pushNGet()
+          pushNGet()
           if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSE)) {
-            pushGet()
+            pushNGet()
           }
           else {
             error(CONSTANTS.ADDRESSE)
@@ -248,7 +248,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def newline(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.NEWLINE)) {
-      pushGet()
+      pushNGet()
     }
   }
 
@@ -265,7 +265,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   def needText(): Unit = {
     if (isText()) {
-      pushGet()
+      pushNGet()
       needText()
     }
   }
@@ -273,7 +273,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
     println("SYNTAX ERROR. Expected: '" + expected + "'. Received: '" + Compiler.currentToken + "'")
     System.exit(1)
   }
-  def pushGet(): Unit = {
+  def pushNGet(): Unit = {
     parseTree.push(Compiler.currentToken)
     Compiler.Scanner.getNextToken()
   }
