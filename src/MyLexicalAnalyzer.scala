@@ -151,7 +151,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer{
       }
     }
 
-    return text
+    text
   }
 
   def nonSpace() : Unit = {
